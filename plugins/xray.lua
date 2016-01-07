@@ -1,30 +1,20 @@
 do
-local function invite_user(chat, user)
-   local status = chat_add_user (chat, user, ok_cb, false)
-   if not status then
-      return "An error happened"
-   end
-   return "Added user: "..user.." to "..chat
-end
-local function service_msg(msg)
-    if msg.action.user.id == 159680806 then
-       local chat = 'chat#id'..msg.to.id
-       local user = 'user#id148278481'
-      chat_add_user(chat, user, callback, false)
-     end
-   local receiver = get_receiver(msg)
-   local response = ""
-   if msg.action.type == "chat_del_user" and msg.from.id ~= 148278481 and msg.from.id ~= 160612764 then
-      print(invite_user("chat#id"..msg.to.id, "user#id"..msg.action.user.id))
-   end
+local function run(msg, matches)
+local bot_id = 156539679
+local fbotmain = 129791651
 
-   send_large_msg(receiver, response)
+    if matches[1] == 'bye' and is_admin(msg) or msg.action.type == "chat_add_user" and msg.action.user.id == tonumber(bot_id) and not is_sudo(msg) then
+       chat_del_user("chat#id"..msg.to.id, 'user#id'..bot_id, ok_cb, false)
+    elseif msg.action.type == "chat_del_user" and msg.action.user.id == tonumber(fbotmain) then
+       chat_add_user("chat#id"..msg.to.id, 'user#id'..fbotmain, ok_cb, false)
+    end
 end
-
+ 
 return {
-  description = "Invite or kick someone",
-  usage = "Invite or kick someone",
-  patterns = {},
-  on_service_msg = service_msg
+  patterns = {
+    "^[!/](bye)$",
+    "^!!tgservice (.+)$",
+  },
+  run = run
 }
 end
